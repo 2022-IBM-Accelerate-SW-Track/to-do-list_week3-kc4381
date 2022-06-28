@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import { Button, TextField } from "@mui/material";
+import { DesktopDatePicker , LocalizationProvider} from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+
 
 class AddTodo extends Component {
   // Create a local react state of the this component with both content date property set to nothing.
@@ -7,7 +10,8 @@ class AddTodo extends Component {
     super();
     this.state = {
       content: "",
-      date: ""
+      date: "",
+      due: null,
     };
   }
   // The handleChange function updates the react state with the new input value provided from the user and the current date/time.
@@ -25,14 +29,25 @@ class AddTodo extends Component {
   // in the Home.js file which then adds the input into the list.
   handleSubmit = (event) => {
     event.preventDefault();
+    console.log(this.state.due);
     if (this.state.content.trim()) {
       this.props.addTodo(this.state);
       this.setState({
         content: "",
-        date: ""
+        date: "",
+        due: null,
       });
     }
   };
+
+  //create a new handleChange 
+  handleDate = (event) =>{
+    console.log(this.state.due);
+    this.setState({
+      due: new Date(event).toLocaleDateString()
+    });
+  }
+
   render() {
     return (
       // 1. When rendering a component, you can render as many elements as you like as long as it is wrapped inside
@@ -49,6 +64,18 @@ class AddTodo extends Component {
           onChange={this.handleChange}
           value={this.state.content}
         />
+
+        <LocalizationProvider dateAdapter={AdapterDateFns}>         
+          <DesktopDatePicker
+            id="new-item-date"
+            label="Due Date"
+            value={this.state.due} //step 1. replace value with new state variable
+            onChange={this.handleDate}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+
+
         <Button
           style={{ marginLeft: "10px" }}
           onClick={this.handleSubmit}
